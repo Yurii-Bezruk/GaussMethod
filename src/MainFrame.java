@@ -48,31 +48,11 @@ public class MainFrame extends JFrame {
 		contentPane.add(panelButtons, BorderLayout.SOUTH);
 		
 		solve = new JButton("Solve");
-//		plot.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				if(parameterTextField.getText().equals(""))
-//					f = new AnalyticFunction(functionTextField.getText(), variableTextField.getText());
-//				else { 
-//					f = new AnalyticFunction(functionTextField.getText(), variableTextField.getText(), parameterTextField.getText());
-//					if(!parameterValueTextField.getText().equals("")) {
-//						f.setParameterValue(Double.parseDouble(parameterValueTextField.getText()));
-//					}
-//				}
-//				start = Double.parseDouble(startTextField.getText());
-//				stop = Double.parseDouble(stopTextField.getText());
-//				step = Double.parseDouble(stepTextField.getText());
-//				
-//				function.clear();
-//				deritative.clear();
-//				for (double x = start; x < stop; x += step) {
-//					function.add(x, f.evalf(x));
-//					deritative.add(x, f.deritative().evalf(x));
-//				}
-//				
-//				((XYPlot)chart.getPlot()).getDomainAxis().setRangeAboutValue(0, 10);
-//				((XYPlot)chart.getPlot()).getRangeAxis().setRangeAboutValue(0, 10);
-//			}
-//		});
+		solve.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		panelButtons.add(solve);
 		
 		exit = new JButton("Exit");
