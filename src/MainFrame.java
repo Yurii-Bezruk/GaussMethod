@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -26,6 +27,7 @@ public class MainFrame extends JFrame {
 	private int dimention = 3;
 	
 	private JPanel centralPanel;
+	private JPanel[] matrixPanels;
 	private JTextField[][] matrixCoeffs;
 	private JLabel[][] matrixLabels;
 	
@@ -37,7 +39,7 @@ public class MainFrame extends JFrame {
 		setResizable(false);
 		setTitle("Linear System Gauss Method");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setBounds(150, 150, 550, 550);
+		setBounds(150, 150, 400, 400);
 		contentPane = new JPanel();
 		contentPane.setLayout(new BorderLayout());
 		setContentPane(contentPane);
@@ -86,7 +88,7 @@ public class MainFrame extends JFrame {
 		headPanel.add(dimentionLabel);
 		
 		dimentionTextField = new JTextField(String.valueOf(dimention));
-		dimentionTextField.setColumns(4);
+		dimentionTextField.setColumns(12);
 		dimentionTextField.addKeyListener(new EnterListener());
 		headPanel.add(dimentionTextField);	
 		
@@ -94,21 +96,6 @@ public class MainFrame extends JFrame {
 		
 		centralPanel = new JPanel(new FlowLayout());
 		initializeMatrixForm();
-		for (int i = 0; i < dimention; i++) {
-			for (int j = 0; j < dimention + 1; j++) {
-				centralPanel.add(matrixCoeffs[i][j]);
-				if(j < dimention)
-					centralPanel.add(matrixLabels[i][j]);
-			}
-		}
-		contentPane.add(centralPanel, BorderLayout.CENTER);
-		setVisible(true);
-	}
-	
-	private void initializeMatrixForm() {
-		dimention = Integer.parseInt(dimentionTextField.getText());
-		matrixCoeffs = new JTextField[dimention][dimention+1];
-		matrixLabels = new JLabel[dimention][dimention];
 		
 		matrixCoeffs[0][0] = new JTextField("1.21");
 		matrixCoeffs[0][1] = new JTextField("4.05");
@@ -126,8 +113,32 @@ public class MainFrame extends JFrame {
 		matrixCoeffs[2][3] = new JTextField("10.5");
 		
 		for (int i = 0; i < dimention; i++) {
-			for(int j = 0; j < dimention; j++) 
-				matrixLabels[i][j] = new JLabel("x" + (j+1));
+			for (int j = 0; j < dimention + 1; j++) {
+				matrixPanels[i].add(matrixCoeffs[i][j]);
+				if(j < dimention)
+					matrixPanels[i].add(matrixLabels[i][j]);
+			}
+		}
+		for (JPanel panel : matrixPanels) 
+			centralPanel.add(panel);
+		
+		contentPane.add(centralPanel, BorderLayout.CENTER);
+		
+		setVisible(true);
+	}
+	
+	private void initializeMatrixForm() {
+		dimention = Integer.parseInt(dimentionTextField.getText());
+		matrixCoeffs = new JTextField[dimention][dimention+1];
+		matrixLabels = new JLabel[dimention][dimention];
+		matrixPanels = new JPanel[dimention];
+		
+		for (int i = 0; i < dimention; i++) {
+			matrixPanels[i] = new JPanel(new FlowLayout());
+			for(int j = 0; j < dimention; j++) {
+				String str = "x" + (j+1) + (j == dimention-1 ? " = " : " + ");
+				matrixLabels[i][j] = new JLabel(str);
+			}
 		}		
 
 	}
