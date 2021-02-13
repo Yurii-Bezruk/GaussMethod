@@ -19,14 +19,14 @@ public class Row implements Cloneable{
 			row[i] -= otherRow.row[i];	
 		return this;
 	}
-	public Row multiply(double koef) {
+	public Row multiply(double coeff) {
 		for (int i = 0; i < row.length; i++) 
-			row[i] *= koef;		
+			row[i] *= coeff;		
 		return this;
 	}
-	public Row divide(double koef) {
+	public Row divide(double coeff) {
 		for (int i = 0; i < row.length; i++) 
-			row[i] /= koef;		
+			row[i] /= coeff;		
 		return this;
 	}
 	public double elem(int index) {

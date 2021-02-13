@@ -21,28 +21,17 @@ public class MainFrame extends JFrame {
 	private JPanel contentPane;
 	
 	private JPanel headPanel;	
-	private JLabel dimentionLabel;
-	
-	
-	private JLabel variableLabel;
-	private JLabel parameterLabel;
-	private JLabel parameterValueLabel;
-	
+	private JLabel dimentionLabel;		
 	private JTextField dimentionTextField;
+	private int dimention = 3;
 	
-	
-	private JTextField variableTextField;
-	private JTextField parameterTextField;
-	private JTextField parameterValueTextField;
-	
+	private JPanel centralPanel;
+	private JTextField[][] matrixCoeffs;
+	private JLabel[][] matrixLabels;
 	
 	private JPanel panelButtons;
 	private JButton solve;
-	private JButton exit;
-	
-	
-	
-	
+	private JButton exit;	
 	
 	public MainFrame() {
 		setResizable(false);
@@ -96,15 +85,52 @@ public class MainFrame extends JFrame {
 		dimentionLabel = new JLabel("Dimention: ");
 		headPanel.add(dimentionLabel);
 		
-		dimentionTextField = new JTextField("3");
+		dimentionTextField = new JTextField(String.valueOf(dimention));
 		dimentionTextField.setColumns(4);
 		dimentionTextField.addKeyListener(new EnterListener());
-		headPanel.add(dimentionTextField);		
+		headPanel.add(dimentionTextField);	
 		
 		contentPane.add(headPanel, BorderLayout.NORTH);
+		
+		centralPanel = new JPanel(new FlowLayout());
+		initializeMatrixForm();
+		for (int i = 0; i < dimention; i++) {
+			for (int j = 0; j < dimention + 1; j++) {
+				centralPanel.add(matrixCoeffs[i][j]);
+				if(j < dimention)
+					centralPanel.add(matrixLabels[i][j]);
+			}
+		}
+		contentPane.add(centralPanel, BorderLayout.CENTER);
 		setVisible(true);
 	}
-			
+	
+	private void initializeMatrixForm() {
+		dimention = Integer.parseInt(dimentionTextField.getText());
+		matrixCoeffs = new JTextField[dimention][dimention+1];
+		matrixLabels = new JLabel[dimention][dimention];
+		
+		matrixCoeffs[0][0] = new JTextField("1.21");
+		matrixCoeffs[0][1] = new JTextField("4.05");
+		matrixCoeffs[0][2] = new JTextField("2.11");
+		matrixCoeffs[0][3] = new JTextField("4.25");
+		
+		matrixCoeffs[1][0] = new JTextField("0.75");
+		matrixCoeffs[1][1] = new JTextField("1.21");
+		matrixCoeffs[1][2] = new JTextField("3.21");
+		matrixCoeffs[1][3] = new JTextField("7.42");
+		
+		matrixCoeffs[2][0] = new JTextField("2.27");
+		matrixCoeffs[2][1] = new JTextField("5.66");
+		matrixCoeffs[2][2] = new JTextField("3.06");
+		matrixCoeffs[2][3] = new JTextField("10.5");
+		
+		for (int i = 0; i < dimention; i++) {
+			for(int j = 0; j < dimention; j++) 
+				matrixLabels[i][j] = new JLabel("x" + (j+1));
+		}		
+
+	}
 	
 	private class EnterListener implements KeyListener {
 		@Override
