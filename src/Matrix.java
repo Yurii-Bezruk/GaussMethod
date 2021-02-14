@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Matrix {
 	private Row[] system;
@@ -22,14 +24,14 @@ public class Matrix {
 		else {
 			double result = 0;
 			for(int i = 0; i < size(); i++) {				
-				Row[] rows = new Row[size()-1];				
-				for (int oldPosition = 0, newPosition = 0; oldPosition < size(); oldPosition++) {
-					if(i != oldPosition) {
-						rows[newPosition] = row(oldPosition).subRow(1, row(oldPosition).size()-1);
-						newPosition++;
+				List<Row> rows = new ArrayList<>();				
+				for (int j = 0; j < size(); j++) {
+					if(i != j) {
+						rows.add(row(j).subRow(1, row(j).size() - (row(j).size() > this.size() ? 1 : 0) ));
 					}
 				}
-				Matrix minor = new Matrix(rows);				
+				Matrix minor = new Matrix(rows.toArray(new Row[rows.size()]));
+				minor.print();
 				result += Math.pow(-1, i) * row(i).elem(0) * minor.determinant(); 				
 			}
 			return result;
