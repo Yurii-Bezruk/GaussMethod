@@ -75,9 +75,7 @@ public class MainFrame extends JFrame {
 		setVisible(true);
 	}
 	
-	private void initializeMatrixForm() {
-		
-		
+	private void initializeMatrixForm() {		
 		matrixCoeffs = new JTextField[dimention][dimention+1];
 		matrixLabels = new JLabel[dimention][dimention];
 		matrixPanels = new JPanel[dimention];
