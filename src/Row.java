@@ -37,7 +37,7 @@ public class Row implements Cloneable{
 	}
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		return new Row(Arrays.copyOf(row, row.length));
+		return new Row(row);
 	}
 	@Override
 	public String toString() {
