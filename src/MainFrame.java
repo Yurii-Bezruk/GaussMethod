@@ -1,5 +1,4 @@
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -14,15 +13,13 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	
-	private int dimention = 3;
+	private int dimension = 3;
 	private JPanel headPanel;		
-	private JTextField dimentionTextField;
+	private JTextField dimensionTextField;
 	private JTextField resultTextField;
 	
-	private JPanel centralPanel;
-	private JPanel[] matrixPanels;
-	private JTextField[][] matrixCoeffs;
-	private JLabel[][] matrixLabels;	
+	private MatrixPanel matrixPanel;
+		
 	
 	private JPanel panelButtons;
 	private JButton solve;
@@ -37,11 +34,11 @@ public class MainFrame extends JFrame {
 		setContentPane(contentPane);
 				
 		headPanel = new JPanel();		
-		headPanel.add(new JLabel("Dimention: "));		
-		dimentionTextField = new JTextField(String.valueOf(dimention));
-		dimentionTextField.setColumns(2);
-		dimentionTextField.addActionListener(new DimentionListener());
-		headPanel.add(dimentionTextField);	
+		headPanel.add(new JLabel("dimension: "));		
+		dimensionTextField = new JTextField(String.valueOf(dimension));
+		dimensionTextField.setColumns(2);
+		dimensionTextField.addActionListener(new DimensionListener());
+		headPanel.add(dimensionTextField);	
 		
 		headPanel.add(new JLabel("Result: "));		
 		resultTextField = new JTextField("");
@@ -49,12 +46,10 @@ public class MainFrame extends JFrame {
 		headPanel.add(resultTextField);
 		contentPane.add(headPanel, BorderLayout.NORTH);
 		
-		centralPanel = new JPanel(new FlowLayout());
-		dimention = Integer.parseInt(dimentionTextField.getText());
-		initializeMatrixForm();
-		defaultMatrixForm();		
-		establishMatrixForm();		
-		contentPane.add(centralPanel, BorderLayout.CENTER);
+		dimension = Integer.parseInt(dimensionTextField.getText());
+		matrixPanel = new MatrixPanel(dimension);		
+		matrixPanel.setDefaultState();	
+		contentPane.add(matrixPanel, BorderLayout.CENTER);
 		
 		panelButtons = new JPanel();
 		
@@ -73,57 +68,15 @@ public class MainFrame extends JFrame {
 		
 		setVisible(true);
 	}
-	
-	private void initializeMatrixForm() {		
-		matrixCoeffs = new JTextField[dimention][dimention+1];
-		matrixLabels = new JLabel[dimention][dimention];
-		matrixPanels = new JPanel[dimention];
-		
-		for (int i = 0; i < dimention; i++) {
-			matrixPanels[i] = new JPanel(new FlowLayout());
-			for(int j = 0; j < dimention; j++) {
-				String str = "x" + (j+1) + (j == dimention-1 ? " = " : " + ");
-				matrixLabels[i][j] = new JLabel(str);
-			}
-		}
-	}
-	private void defaultMatrixForm() {
-		matrixCoeffs[0][0] = new JTextField("1.21");
-		matrixCoeffs[0][1] = new JTextField("4.05");
-		matrixCoeffs[0][2] = new JTextField("2.11");
-		matrixCoeffs[0][3] = new JTextField("4.25");		
-		matrixCoeffs[1][0] = new JTextField("0.75");
-		matrixCoeffs[1][1] = new JTextField("1.21");
-		matrixCoeffs[1][2] = new JTextField("3.21");
-		matrixCoeffs[1][3] = new JTextField("7.42");		
-		matrixCoeffs[2][0] = new JTextField("2.27");
-		matrixCoeffs[2][1] = new JTextField("5.66");
-		matrixCoeffs[2][2] = new JTextField("3.06");
-		matrixCoeffs[2][3] = new JTextField("10.5");
-	}
-	private void establishMatrixForm() {
-		for (int i = 0; i < dimention; i++) {
-			for (int j = 0; j < dimention + 1; j++) {
-				if(matrixCoeffs[i][j] == null)
-					matrixCoeffs[i][j] = new JTextField("");
-				matrixCoeffs[i][j].setColumns(3);
-				matrixPanels[i].add(matrixCoeffs[i][j]);
-				if(j < dimention)
-					matrixPanels[i].add(matrixLabels[i][j]);
-			}
-		}
-		for (JPanel panel : matrixPanels) 
-			centralPanel.add(panel);
-	}
 	private class SolveButtonListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			Row[] rows = new Row[dimention];
-			double[] row = new double[dimention + 1];
-			for(int i = 0; i < dimention; i++) {
-				for (int j = 0; j < dimention + 1; j++) {
+			Row[] rows = new Row[dimension];
+			double[] row = new double[dimension + 1];
+			for(int i = 0; i < dimension; i++) {
+				for (int j = 0; j < dimension + 1; j++) {
 					try {
-					row[j] = Double.parseDouble(matrixCoeffs[i][j].getText());
+					row[j] = matrixPanel.getValueOn(i, j);
 					}catch(NumberFormatException exception) {
 						JOptionPane.showMessageDialog(MainFrame.this, "Uncorrect input. Please input numbers.");
 						return;
@@ -145,26 +98,18 @@ public class MainFrame extends JFrame {
 			}
 		}
 	}
-	private class DimentionListener implements ActionListener {
+	private class DimensionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {			
-			for (int i = 0; i < dimention; i++) {
-				for (int j = 0; j < dimention + 1; j++) {
-					matrixPanels[i].remove(matrixCoeffs[i][j]);
-					if(j < dimention)
-						matrixPanels[i].remove(matrixLabels[i][j]);
-				}
-			}
-			for (JPanel panel : matrixPanels) 
-				centralPanel.remove(panel);
+			contentPane.remove(matrixPanel);
 			try {
-				dimention = Integer.parseInt(dimentionTextField.getText());
+				dimension = Integer.parseInt(dimensionTextField.getText());
 			}catch(NumberFormatException exception) {
 				JOptionPane.showMessageDialog(MainFrame.this, "Uncorrect input. Please input integer value.");
 				return;
 			}
-			initializeMatrixForm();
-			establishMatrixForm();			
+			matrixPanel = new MatrixPanel(dimension);
+			contentPane.add(matrixPanel);
 			MainFrame.this.revalidate();
 			MainFrame.this.repaint();
 		}				
