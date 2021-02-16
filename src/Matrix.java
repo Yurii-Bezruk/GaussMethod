@@ -1,12 +1,19 @@
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Matrix {
 	private Row[] system;
+	private java.io.FileWriter writer;
 	
 	public Matrix(Row[] arr) {
 		system = Arrays.copyOf(arr, arr.length);
+		try { 
+			writer = new java.io.FileWriter("countingProcess.txt");
+		}catch(java.io.IOException e) {
+			e.printStackTrace();
+		}
 	}
 	public int size() {
 		return system.length;
@@ -37,8 +44,10 @@ public class Matrix {
 		}
 	}
 	public double[] solve() {
+		log();
 		for(int i = 0; i < size(); i++) {
 			row(i).divide(row(i).elem(i));
+			log();
 			for (int j = 0; j < size(); j++) {
 				if(i != j) {					
 					Row next = null;
@@ -46,6 +55,7 @@ public class Matrix {
 						next = (Row) row(i).clone();
 					} catch (CloneNotSupportedException e) {}
 					row(j).subtract(next.multiply(row(j).elem(i)));
+					log();
 				}
 			}
 		}		
@@ -53,11 +63,20 @@ public class Matrix {
 		for (int i = 0; i < result.length; i++) {
 			result[i] = row(i).elem(row(i).size() - 1);
 		}
+		try {
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
-	public void print() {
-		for (Row row : system) 
-			System.out.println(row);		
-		System.out.println();
+	private void log() {
+		try {			
+			for (Row row : system) 
+				writer.write(row.toString());
+			writer.write("\n");
+		} catch (java.io.IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -44,7 +44,7 @@ public class Row implements Cloneable{
 		String result = "";
 		for (double elem : row) {
 			result += String.format("%.2f ", elem);
-		}
-		return result;
+		}		
+		return result + "\n";
 	}
 }
