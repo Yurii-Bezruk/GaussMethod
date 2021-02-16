@@ -130,7 +130,7 @@ public class MainFrame extends JFrame {
 						return;
 					}
 				}
-				rows[i] = new Row(Arrays.copyOf(row, row.length));
+				rows[i] = new Row(row);
 			}	
 			
 			Matrix system = new Matrix(rows);		

@@ -31,7 +31,6 @@ public class Matrix {
 					}
 				}
 				Matrix minor = new Matrix(rows.toArray(new Row[rows.size()]));
-				minor.print();
 				result += Math.pow(-1, i) * row(i).elem(0) * minor.determinant(); 				
 			}
 			return result;
