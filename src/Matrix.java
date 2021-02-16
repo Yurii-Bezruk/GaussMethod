@@ -22,8 +22,11 @@ public class Matrix {
 		return system[index];
 	}
 	public double determinant() {
-		if(size() < 2) {
+		if(size() < 1) {
 			return 0;
+		}
+		else if(size() == 1) {
+			return row(0).elem(0);
 		}
 		else if(size() == 2) {
 			return (row(0).elem(0) * row(1).elem(1)) - (row(0).elem(1) * row(1).elem(0));

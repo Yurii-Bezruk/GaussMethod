@@ -1,7 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,8 +17,7 @@ public class MainFrame extends JFrame {
 	private JTextField dimensionTextField;
 	private JTextField resultTextField;
 	
-	private MatrixPanel matrixPanel;
-		
+	private MatrixPanel matrixPanel;	
 	
 	private JPanel panelButtons;
 	private JButton solve;
@@ -76,7 +74,7 @@ public class MainFrame extends JFrame {
 			for(int i = 0; i < dimension; i++) {
 				for (int j = 0; j < dimension + 1; j++) {
 					try {
-					row[j] = matrixPanel.getValueOn(i, j);
+						row[j] = matrixPanel.getValueOn(i, j);
 					}catch(NumberFormatException exception) {
 						JOptionPane.showMessageDialog(MainFrame.this, "Uncorrect input. Please input numbers.");
 						return;
