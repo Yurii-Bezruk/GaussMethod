@@ -3,8 +3,8 @@ import java.util.Arrays;
 public class Row implements Cloneable{
 	private double[] row;
 	
-	public Row(double[] arr) {
-		row = Arrays.copyOf(arr, arr.length);			
+	public Row(double... elems) {
+		row = Arrays.copyOf(elems, elems.length);
 	}
 	public int size() {
 		return row.length;

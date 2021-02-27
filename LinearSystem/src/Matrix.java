@@ -7,8 +7,8 @@ public class Matrix {
 	private Row[] system;
 	private java.io.FileWriter writer;
 	
-	public Matrix(Row[] arr) {
-		system = Arrays.copyOf(arr, arr.length);
+	public Matrix(Row... rows) {
+		system = Arrays.copyOf(rows, rows.length);
 		try { 
 			writer = new java.io.FileWriter("countingProcess.txt");
 		}catch(java.io.IOException e) {
