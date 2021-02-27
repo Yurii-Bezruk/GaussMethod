@@ -10,9 +10,17 @@ public class Main {
 //				}
 //			}
 //		});	
-		Row row = new Row(1, 2, 3);
-		Row row2 = new Row(1, 2, 3, 5, 7);
-		Matrix m = new Matrix(new Row(1,23, 0),
-							  new Row(3, 4, 6));
+		int m = 30;
+		Matrix system = new Matrix(new Row(5, 1, -1, 1, 3*m),
+								   new Row(1, -4, 1, -1, m-6),
+								   new Row(-1, 1, 4, 1, 15-m),
+								   new Row(1, 2, 1, -5, m+2));
+		double epsilon = 0.005;
+		Row firstStep = new Row(0.7*m, 1, 2, 0.5);
+		if(system.determinant() == 0) {
+			System.err.println("Det is 0!");
+			return;
+		}
+		System.out.println();
 	}
 }

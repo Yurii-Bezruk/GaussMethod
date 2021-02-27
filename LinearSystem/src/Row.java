@@ -32,12 +32,15 @@ public class Row implements Cloneable{
 	public double elem(int index) {
 		return row[index];
 	}
+	public void set(int index, double value) {
+		row[index] = value;
+	}
 	public Row subRow(int from, int to) {
 		return new Row(Arrays.copyOfRange(row, from, to));
 	}
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		return new Row(row);
+		return new Row(Arrays.copyOf(row, row.length));
 	}
 	@Override
 	public String toString() {

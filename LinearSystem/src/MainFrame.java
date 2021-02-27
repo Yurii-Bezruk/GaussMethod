@@ -88,7 +88,7 @@ public class MainFrame extends JFrame {
 				resultTextField.setText("Zero determinant! system cannot be solved.");
 			}
 			else {
-				double[] roots = system.solve();
+				double[] roots = system.solveByGauss();
 				resultTextField.setText("(");
 				for (double root : roots) 
 					resultTextField.setText(resultTextField.getText() + String.format("%.2f; ", root));

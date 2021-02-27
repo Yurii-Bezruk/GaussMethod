@@ -15,6 +15,18 @@ public class Matrix {
 			e.printStackTrace();
 		}
 	}
+	
+	public static Matrix createFromRow(Row row) {
+		Row[] rows = new Row[row.size() - 1];
+		for (int i = 0; i < rows.length; i++) {
+			try {
+				rows[i] = (Row) row.clone();				
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		}
+		return new Matrix(rows);		
+	}
 	public int size() {
 		return system.length;
 	}
@@ -46,7 +58,7 @@ public class Matrix {
 			return result;
 		}
 	}
-	public double[] solve() {
+	public double[] solveByGauss() {
 		log();
 		for(int i = 0; i < size(); i++) {
 			row(i).divide(row(i).elem(i));
@@ -73,11 +85,38 @@ public class Matrix {
 		}
 		return result;
 	}
+	public boolean isConverging() {
+		for (int i = 0; i < size(); i++) {
+			double sum = 0.0;
+			for (int j = 0; j < size(); j++)
+				if(j != i)
+					sum += Math.abs(row(i).elem(j));
+			if(sum > Math.abs(row(i).elem(i)))
+				return false;
+		}		
+		return true;
+	}
+	public double[] solveBySimpleIterations(Row approach) {
+		Matrix newSystem = Matrix.createFromRow(approach);
+		for (int i = 0; i < newSystem.size(); i++) {
+			newSystem.row(i).set(i, 0);
+		}
+		
+		
+		
+		return null;
+	}
+	@Override
+	public String toString() {
+		String result = "";
+		for (Row row : system) {
+			result += row;
+		}		
+		return result + "\n";
+	}
 	private void log() {
 		try {			
-			for (Row row : system) 
-				writer.write(row.toString());
-			writer.write("\n");
+			writer.write(toString());
 		} catch (java.io.IOException e) {
 			e.printStackTrace();
 		}
