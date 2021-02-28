@@ -84,14 +84,14 @@ public class MainFrame extends JFrame {
 			}	
 			
 			Matrix system = new Matrix(rows);		
-			if(system.determinant() == 0) {
+			if(system.determinant().doubleValue() == 0) {
 				resultTextField.setText("Zero determinant! system cannot be solved.");
 			}
 			else {
-				double[] roots = system.solveByGauss();
+				Row roots = system.solveByGauss();
 				resultTextField.setText("(");
-				for (double root : roots) 
-					resultTextField.setText(resultTextField.getText() + String.format("%.2f; ", root));
+				for (int i = 0; i < roots.size(); i++) 
+					resultTextField.setText(resultTextField.getText() + String.format("%.2f; ", roots.elem(i)));
 				resultTextField.setText(resultTextField.getText() + ")");
 			}
 		}

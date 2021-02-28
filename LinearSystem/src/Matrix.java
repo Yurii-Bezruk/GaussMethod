@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,32 +54,37 @@ public class Matrix {
 		}
 		return this;
 	}
-	public double determinant() {
+	public Matrix minor(int rowNumber) {
+		List<Row> rows = new ArrayList<>();				
+		for (int j = 0; j < size(); j++) {
+			if(j != rowNumber) {
+				rows.add(row(j).subRow(1, row(j).size() - (row(j).size() > this.size() ? 1 : 0)));
+			}
+		}
+		return new Matrix(rows.toArray(new Row[rows.size()]));
+	}
+	public BigDecimal determinant() {
 		if(size() < 1) {
-			return 0;
+			return new BigDecimal(0);
 		}
 		else if(size() == 1) {
 			return row(0).elem(0);
 		}
 		else if(size() == 2) {
-			return (row(0).elem(0) * row(1).elem(1)) - (row(0).elem(1) * row(1).elem(0));
+			return row(0).elem(0).multiply(row(1).elem(1)).subtract(row(0).elem(1).multiply(row(1).elem(0)));
 		}
 		else {
-			double result = 0;
-			for(int i = 0; i < size(); i++) {				
-				List<Row> rows = new ArrayList<>();				
-				for (int j = 0; j < size(); j++) {
-					if(i != j) {
-						rows.add(row(j).subRow(1, row(j).size() - (row(j).size() > this.size() ? 1 : 0)));
-					}
-				}
-				Matrix minor = new Matrix(rows.toArray(new Row[rows.size()]));
-				result += Math.pow(-1, i) * row(i).elem(0) * minor.determinant(); 				
+			BigDecimal result = new BigDecimal(0);
+			result.setScale(3, RoundingMode.HALF_DOWN);
+			for(int i = 0; i < size(); i++) {
+				BigDecimal sign = new BigDecimal(Math.pow(-1, i));
+				sign.setScale(3, RoundingMode.HALF_DOWN);
+				result = result.add(sign.multiply(row(i).elem(0).multiply(minor(i).determinant()))); 				
 			}
 			return result;
 		}
 	}
-	public double[] solveByGauss() {
+	public Row solveByGauss() {
 		log();
 		for(int i = 0; i < size(); i++) {
 			row(i).divide(row(i).elem(i));
@@ -92,25 +99,23 @@ public class Matrix {
 					log();
 				}
 			}
-		}		
-		double[] result = new double[size()];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = row(i).elem(row(i).size() - 1);
 		}
+		
 		try {
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return rightPart();
 	}
 	public boolean isConverging() {
 		for (int i = 0; i < size(); i++) {
-			double sum = 0.0;
+			BigDecimal sum = new BigDecimal(0);
+			sum.setScale(3, RoundingMode.HALF_DOWN);
 			for (int j = 0; j < size(); j++)
 				if(j != i)
-					sum += Math.abs(row(i).elem(j));
-			if(sum > Math.abs(row(i).elem(i)))
+					sum = sum.add(row(i).elem(j).abs());
+			if(sum.compareTo(row(i).elem(i).abs()) == 1)
 				return false;
 		}		
 		return true;
@@ -118,13 +123,14 @@ public class Matrix {
 	public double[] solveBySimpleIterations(Row approach) {
 		Matrix newSystem = Matrix.createFromRow(approach).appendColumn(this.rightPart());
 		for (int i = 0; i < newSystem.size(); i++) {
-			double xi = newSystem.row(i).elem(row(i).size() - 1);
+			BigDecimal xi = newSystem.row(i).elem(row(i).size() - 1);
+			xi.setScale(3, RoundingMode.HALF_DOWN);
 			for (int j = 0; j < newSystem.size() - 1; j++) {
 				if(i != j) {
-					xi -= newSystem.row(i).elem(j);
+					xi = xi.subtract(newSystem.row(i).elem(j));
 				}
 			}
-			newSystem.row(i).set(i, xi / this.row(i).elem(i));
+			newSystem.row(i).set(i, xi.divide(this.row(i).elem(i), 3, RoundingMode.HALF_DOWN));
 		}
 		System.out.println(newSystem);
 		
@@ -145,5 +151,6 @@ public class Matrix {
 		} catch (java.io.IOException e) {
 			e.printStackTrace();
 		}
+		//System.out.println(toString());
 	}
 }

@@ -1,3 +1,6 @@
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
 
 public class Main {
 	public static void main(String[] args) {		
@@ -17,13 +20,10 @@ public class Main {
 								   new Row(1, 2, 1, -5, m+2));
 		double epsilon = 0.005;
 		Row firstStep = new Row(0.7*m, 1, 2, 0.5);
-		if(system.determinant() == 0) {
+		if(system.determinant().doubleValue() == 0) {
 			System.err.println("Det is 0!");
 			return;
 		}
-		System.out.println(new Row(1, 2, 3).add(new Row(1, 4, 5)));
-		//system.solveBySimpleIterations(firstStep);
-//		Matrix matr = Matrix.createFromRow(new Row(1, 2));
-//		System.out.println(matr.appendRow(new Row(3, 4)).appendColumn(new Row(-1, -6, 4)).rightPart());
+		system.solveBySimpleIterations(firstStep);
 	}
 }
