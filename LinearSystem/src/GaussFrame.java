@@ -10,18 +10,18 @@ import javax.swing.JTextField;
 
 public class GaussFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+	protected JPanel contentPane;
 	
-	private int dimension = 3;
-	private JPanel headPanel;		
-	private JTextField dimensionTextField;
-	private JTextField resultTextField;
+	protected int dimension = 3;
+	protected JPanel headPanel;		
+	protected JTextField dimensionTextField;
+	protected JTextField resultTextField;
 	
-	private MatrixPanel matrixPanel;	
+	protected MatrixPanel matrixPanel;	
 	
-	private JPanel panelButtons;
-	private JButton solve;
-	private JButton exit;	
+	protected JPanel panelButtons;
+	protected JButton solve;
+	protected JButton exit;	
 	
 	public GaussFrame() {
 		setTitle("Linear System Gauss Method");
@@ -46,13 +46,13 @@ public class GaussFrame extends JFrame {
 		
 		dimension = Integer.parseInt(dimensionTextField.getText());
 		matrixPanel = new MatrixPanel(dimension);		
-		matrixPanel.setDefaultState();	
+		matrixPanel.setLab1DefaultState();	
 		contentPane.add(matrixPanel, BorderLayout.CENTER);
 		
 		panelButtons = new JPanel();
 		
 		solve = new JButton("Solve");
-		solve.addActionListener(new SolveButtonListener());
+		solve.addActionListener(new SolveByGaussButtonListener());
 		panelButtons.add(solve);
 		
 		exit = new JButton("Exit");
@@ -63,10 +63,8 @@ public class GaussFrame extends JFrame {
 		});
 		panelButtons.add(exit);
 		contentPane.add(panelButtons, BorderLayout.SOUTH);
-		
-		setVisible(true);
 	}
-	private class SolveButtonListener implements ActionListener{
+	private class SolveByGaussButtonListener implements ActionListener{
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			Row[] rows = new Row[dimension];
@@ -74,7 +72,7 @@ public class GaussFrame extends JFrame {
 			for(int i = 0; i < dimension; i++) {
 				for (int j = 0; j < dimension + 1; j++) {
 					try {
-						row[j] = matrixPanel.getValueOn(i, j);
+						row[j] = matrixPanel.getValueAt(i, j);
 					}catch(NumberFormatException exception) {
 						JOptionPane.showMessageDialog(GaussFrame.this, "Uncorrect input. Please input numbers.");
 						return;
@@ -85,7 +83,7 @@ public class GaussFrame extends JFrame {
 			
 			Matrix system = new Matrix(rows);		
 			if(system.determinant().doubleValue() == 0) {
-				resultTextField.setText("Zero determinant! system cannot be solved.");
+				JOptionPane.showMessageDialog(GaussFrame.this, "Zero determinant! system cannot be solved.");
 			}
 			else {
 				Row roots = system.solveByGauss();
