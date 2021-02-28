@@ -21,6 +21,9 @@ public class Main {
 			System.err.println("Det is 0!");
 			return;
 		}
-		System.out.println();
+		System.out.println(new Row(1, 2, 3).add(new Row(1, 4, 5)));
+		//system.solveBySimpleIterations(firstStep);
+//		Matrix matr = Matrix.createFromRow(new Row(1, 2));
+//		System.out.println(matr.appendRow(new Row(3, 4)).appendColumn(new Row(-1, -6, 4)).rightPart());
 	}
 }

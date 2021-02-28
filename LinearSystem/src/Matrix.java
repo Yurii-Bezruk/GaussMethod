@@ -17,21 +17,40 @@ public class Matrix {
 	}
 	
 	public static Matrix createFromRow(Row row) {
-		Row[] rows = new Row[row.size() - 1];
-		for (int i = 0; i < rows.length; i++) {
-			try {
-				rows[i] = (Row) row.clone();				
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
+		Matrix matrix = new Matrix(row);
+		for (int i = 0; i < row.size() - 1; i++) {
+			matrix.appendRow(row);
 		}
-		return new Matrix(rows);		
+		return matrix;		
 	}
 	public int size() {
 		return system.length;
 	}
 	public Row row(int index) {
 		return system[index];
+	}
+	public Row rightPart() {
+		Row rightPart = new Row(row(0).elem(row(0).size() - 1));
+		for (int i = 1; i < system.length; i++) {
+			rightPart.appendElem(row(i).elem(row(i).size() - 1));
+		}
+		return rightPart;
+	}
+	public Matrix appendRow(Row row) {
+		Row[] temp = Arrays.copyOf(system, system.length + 1);
+		try {
+			temp[temp.length-1] = (Row) row.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		system = temp;
+		return this;
+	}
+	public Matrix appendColumn(Row column) {
+		for (int i = 0; i < system.length; i++) {
+			row(i).appendElem(column.elem(i));
+		}
+		return this;
 	}
 	public double determinant() {
 		if(size() < 1) {
@@ -49,7 +68,7 @@ public class Matrix {
 				List<Row> rows = new ArrayList<>();				
 				for (int j = 0; j < size(); j++) {
 					if(i != j) {
-						rows.add(row(j).subRow(1, row(j).size() - (row(j).size() > this.size() ? 1 : 0) ));
+						rows.add(row(j).subRow(1, row(j).size() - (row(j).size() > this.size() ? 1 : 0)));
 					}
 				}
 				Matrix minor = new Matrix(rows.toArray(new Row[rows.size()]));
@@ -97,11 +116,17 @@ public class Matrix {
 		return true;
 	}
 	public double[] solveBySimpleIterations(Row approach) {
-		Matrix newSystem = Matrix.createFromRow(approach);
+		Matrix newSystem = Matrix.createFromRow(approach).appendColumn(this.rightPart());
 		for (int i = 0; i < newSystem.size(); i++) {
-			newSystem.row(i).set(i, 0);
+			double xi = newSystem.row(i).elem(row(i).size() - 1);
+			for (int j = 0; j < newSystem.size() - 1; j++) {
+				if(i != j) {
+					xi -= newSystem.row(i).elem(j);
+				}
+			}
+			newSystem.row(i).set(i, xi / this.row(i).elem(i));
 		}
-		
+		System.out.println(newSystem);
 		
 		
 		return null;
