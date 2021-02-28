@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class MainFrame extends JFrame {
+public class GaussFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	
@@ -23,7 +23,7 @@ public class MainFrame extends JFrame {
 	private JButton solve;
 	private JButton exit;	
 	
-	public MainFrame() {
+	public GaussFrame() {
 		setTitle("Linear System Gauss Method");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setBounds(150, 150, 400, 400);		
@@ -76,7 +76,7 @@ public class MainFrame extends JFrame {
 					try {
 						row[j] = matrixPanel.getValueOn(i, j);
 					}catch(NumberFormatException exception) {
-						JOptionPane.showMessageDialog(MainFrame.this, "Uncorrect input. Please input numbers.");
+						JOptionPane.showMessageDialog(GaussFrame.this, "Uncorrect input. Please input numbers.");
 						return;
 					}
 				}
@@ -103,13 +103,13 @@ public class MainFrame extends JFrame {
 			try {
 				dimension = Integer.parseInt(dimensionTextField.getText());
 			}catch(NumberFormatException exception) {
-				JOptionPane.showMessageDialog(MainFrame.this, "Uncorrect input. Please input integer value.");
+				JOptionPane.showMessageDialog(GaussFrame.this, "Uncorrect input. Please input integer value.");
 				return;
 			}
 			matrixPanel = new MatrixPanel(dimension);
 			contentPane.add(matrixPanel);
-			MainFrame.this.revalidate();
-			MainFrame.this.repaint();
+			GaussFrame.this.revalidate();
+			GaussFrame.this.repaint();
 		}				
 	}
 

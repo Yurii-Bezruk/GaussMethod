@@ -22,6 +22,12 @@ public class Row implements Cloneable{
 	public int size() {
 		return row.length;
 	}
+	public BigDecimal max() {		
+		return java.util.Collections.max(toList());
+	}
+	public BigDecimal min() {
+		return java.util.Collections.min(toList());
+	}
 	public Row add(Row otherRow) {
 		for (int i = 0; i < row.length; i++) 
 			row[i] = row[i].add(otherRow.row[i]);	
@@ -81,6 +87,13 @@ public class Row implements Cloneable{
 		row = temp;
 		return this;
 	}
+	public java.util.List<BigDecimal> toList(){
+		java.util.List<BigDecimal> list = new java.util.ArrayList<>();
+		for (int i = 0; i < row.length; i++) {
+			list.add(row[i]);
+		}
+		return list;
+	}
 	@Override
 	protected Object clone() throws CloneNotSupportedException {		
 		return new Row(row);
@@ -89,7 +102,7 @@ public class Row implements Cloneable{
 	public String toString() {
 		String result = "";
 		for (BigDecimal elem : row) {
-			result += String.format("%.3f ", elem);
+			result += String.format((elem.compareTo(new BigDecimal(0)) == -1 ? "" : " ") + "%.3f ", elem);
 		}		
 		return result + "\n";
 	}

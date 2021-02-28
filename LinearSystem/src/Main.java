@@ -13,7 +13,7 @@ public class Main {
 //				}
 //			}
 //		});	
-		int m = 30;
+		int m = 1;
 		Matrix system = new Matrix(new Row(5, 1, -1, 1, 3*m),
 								   new Row(1, -4, 1, -1, m-6),
 								   new Row(-1, 1, 4, 1, 15-m),
@@ -24,6 +24,8 @@ public class Main {
 			System.err.println("Det is 0!");
 			return;
 		}
-		system.solveBySimpleIterations(firstStep);
+		System.out.println(system.determinant());
+		System.out.println(system.solveBySimpleIterations(firstStep, epsilon));
+		
 	}
 }

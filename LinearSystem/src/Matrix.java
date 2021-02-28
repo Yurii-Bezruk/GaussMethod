@@ -10,7 +10,14 @@ public class Matrix {
 	private java.io.FileWriter writer;
 	
 	public Matrix(Row... rows) {
-		system = Arrays.copyOf(rows, rows.length);
+		system = new Row[rows.length];
+		for (int i = 0; i < rows.length; i++) {
+			try {
+				system[i] = (Row) rows[i].clone();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		}
 		try { 
 			writer = new java.io.FileWriter("countingProcess.txt");
 		}catch(java.io.IOException e) {
@@ -37,6 +44,13 @@ public class Matrix {
 			rightPart.appendElem(row(i).elem(row(i).size() - 1));
 		}
 		return rightPart;
+	}
+	public Row diagonal() {
+		Row diagonal = new Row(row(0).elem(0));
+		for (int i = 1; i < system.length; i++) {
+			diagonal.appendElem(row(i).elem(i));
+		}
+		return diagonal;
 	}
 	public Matrix appendRow(Row row) {
 		Row[] temp = Arrays.copyOf(system, system.length + 1);
@@ -120,22 +134,34 @@ public class Matrix {
 		}		
 		return true;
 	}
-	public double[] solveBySimpleIterations(Row approach) {
-		Matrix newSystem = Matrix.createFromRow(approach).appendColumn(this.rightPart());
-		for (int i = 0; i < newSystem.size(); i++) {
-			BigDecimal xi = newSystem.row(i).elem(row(i).size() - 1);
-			xi.setScale(3, RoundingMode.HALF_DOWN);
-			for (int j = 0; j < newSystem.size() - 1; j++) {
-				if(i != j) {
-					xi = xi.subtract(newSystem.row(i).elem(j));
+	public Row solveBySimpleIterations(Row approach, double precision) {
+		BigDecimal bigPrecision = new BigDecimal(precision);
+		bigPrecision.setScale(3, RoundingMode.HALF_DOWN);
+		Row difference = new Row(bigPrecision.add(new BigDecimal(1)));
+		
+		while(difference.max().compareTo(bigPrecision) == 1) {
+			Matrix newSystem = Matrix.createFromRow(approach).appendColumn(this.rightPart());
+			for (int i = 0; i < newSystem.size(); i++) {
+				BigDecimal xi = newSystem.row(i).elem(row(i).size() - 1);
+				xi.setScale(3, RoundingMode.HALF_DOWN);
+				for (int j = 0; j < newSystem.size(); j++) {
+					if(i != j) {
+						xi = xi.subtract(newSystem.row(i).elem(j));
+					}
 				}
+				newSystem.row(i).set(i, xi.divide(this.row(i).elem(i), 3, RoundingMode.HALF_DOWN));
 			}
-			newSystem.row(i).set(i, xi.divide(this.row(i).elem(i), 3, RoundingMode.HALF_DOWN));
+			//System.out.print(newSystem);
+			difference = newSystem.diagonal();
+			//System.out.print("   "+difference);
+			//System.out.print(" - "+approach);
+			for (int i = 0; i < system.length; i++) {
+				difference.set(i, newSystem.diagonal().elem(i).subtract(approach.elem(i)).abs());
+			}
+			//System.out.println("|=|"+difference);
+			approach = newSystem.diagonal();			
 		}
-		System.out.println(newSystem);
-		
-		
-		return null;
+		return approach;
 	}
 	@Override
 	public String toString() {
