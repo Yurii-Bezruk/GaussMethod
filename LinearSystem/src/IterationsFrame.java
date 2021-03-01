@@ -65,11 +65,11 @@ public class IterationsFrame extends GaussFrame {
 	}
 	private void setFieldsWithM() {
 		try {
+			vectorPanel.setValueAt(0, m * 0.7);
 			matrixPanel.setValueAt(0, dimension, 3 * m);
 			matrixPanel.setValueAt(1, dimension, m - 6);
 			matrixPanel.setValueAt(2, dimension, 15 - m);
 			matrixPanel.setValueAt(3, dimension, m + 2);
-			vectorPanel.setValueAt(0, m * 0.7);
 		}catch(java.lang.ArrayIndexOutOfBoundsException e) {}
 	}
 	private class SolveButtonListener implements ActionListener{
