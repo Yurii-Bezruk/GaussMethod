@@ -97,11 +97,15 @@ public class GaussFrame extends JFrame {
 	private class DimensionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {			
-			contentPane.remove(matrixPanel);
+			contentPane.remove(matrixPanel);		
 			try {
 				dimension = Integer.parseInt(dimensionTextField.getText());
+				if(dimension <= 0) {
+					JOptionPane.showMessageDialog(GaussFrame.this, "Uncorrect input. Please input integer value > 0.");
+					return;
+				}
 			}catch(NumberFormatException exception) {
-				JOptionPane.showMessageDialog(GaussFrame.this, "Uncorrect input. Please input integer value.");
+				JOptionPane.showMessageDialog(GaussFrame.this, "Uncorrect input. Please input integer value > 0.");
 				return;
 			}
 			matrixPanel = new MatrixPanel(dimension);
