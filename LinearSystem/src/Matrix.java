@@ -151,15 +151,18 @@ public class Matrix {
 				}
 				newSystem.row(i).set(i, xi.divide(this.row(i).elem(i), 3, RoundingMode.HALF_DOWN));
 			}
-			//System.out.print(newSystem);
+			this.log(newSystem.toString());
 			difference = newSystem.diagonal();
-			//System.out.print("   "+difference);
-			//System.out.print(" - "+approach);
 			for (int i = 0; i < system.length; i++) {
 				difference.set(i, newSystem.diagonal().elem(i).subtract(approach.elem(i)).abs());
 			}
-			//System.out.println("|=|"+difference);
-			approach = newSystem.diagonal();			
+			approach = newSystem.diagonal();
+			this.log(approach.toString());
+		}
+		try {
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return approach;
 	}
@@ -172,11 +175,13 @@ public class Matrix {
 		return result + "\n";
 	}
 	private void log() {
+		log(toString());
+	}
+	private void log(String what) {
 		try {			
-			writer.write(toString());
+			writer.write(what+"\n");
 		} catch (java.io.IOException e) {
 			e.printStackTrace();
 		}
-		//System.out.println(toString());
 	}
 }

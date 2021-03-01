@@ -90,8 +90,7 @@ public class IterationsFrame extends GaussFrame {
 			}	
 			
 			Matrix system = new Matrix(rows);
-			double determinant = system.determinant().doubleValue();
-			if(determinant == 0) {
+			if(system.determinant().doubleValue() == 0) {
 				JOptionPane.showMessageDialog(IterationsFrame.this, "Zero determinant! system cannot be solved.");
 			}
 			else if(! system.isConverging()) {
