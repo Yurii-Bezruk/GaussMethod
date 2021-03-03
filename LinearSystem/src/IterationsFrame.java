@@ -140,6 +140,7 @@ public class IterationsFrame extends GaussFrame {
 			matrixPanel = new MatrixPanel(dimension);
 			vectorPanel = new VectorPanel(dimension);
 			matrixPanel.add(vectorPanel, BorderLayout.NORTH);
+			matrixPanel.add(resultPanel, BorderLayout.SOUTH);
 			contentPane.add(matrixPanel);
 			IterationsFrame.this.revalidate();
 			IterationsFrame.this.repaint();
