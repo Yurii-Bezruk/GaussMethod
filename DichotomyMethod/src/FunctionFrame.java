@@ -21,7 +21,7 @@ public class FunctionFrame extends JFrame {
 		private JTextField functionTextField;
 		
 		private XYSeries functionValues;
-		private Function function;
+		private Equation function;
 		
 		private JPanel panelButtons;
 		private JButton plot;
@@ -119,7 +119,7 @@ public class FunctionFrame extends JFrame {
 		private JFreeChart createChart() {
 			functionValues = new XYSeries("Function");	
 			
-			function = new Function();		
+			function = new Equation();		
 			for (double x = start; x < stop; x += step) {
 				functionValues.add(x, function.evalf(x));
 			}
