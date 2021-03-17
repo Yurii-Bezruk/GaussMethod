@@ -21,14 +21,11 @@ public class FunctionFrame extends JFrame {
 		private JTextField functionTextField;
 		
 		private XYSeries functionValues;
-		private Equation function;
+		private Equation equation;
 		
 		private JPanel panelButtons;
 		private JButton plot;
 		private JButton exit;
-		private double start = -3.0;
-		private double stop = 6.0;
-		private double step = 0.01;
 		private JLabel startLabel; 
 		private JLabel stopLabel; 
 		private JLabel stepLabel; 
@@ -48,6 +45,10 @@ public class FunctionFrame extends JFrame {
 			contentPane = new JPanel(new BorderLayout());
 			setContentPane(contentPane);
 			
+			JFreeChart chart = createChart();
+			ChartPanel chartPanel = new ChartPanel(chart);
+			contentPane.add(chartPanel, BorderLayout.CENTER);	
+			
 			panelButtons = new JPanel();
 			contentPane.add(panelButtons, BorderLayout.SOUTH);
 			
@@ -55,13 +56,13 @@ public class FunctionFrame extends JFrame {
 			plot.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					
-					start = Double.parseDouble(startTextField.getText());
-					stop = Double.parseDouble(stopTextField.getText());
-					step = Double.parseDouble(stepTextField.getText());
-					
+					equation.setStart(startTextField.getText());
+					equation.setStop(stopTextField.getText());
+					equation.setStep(stepTextField.getText());
+					java.math.BigDecimal[][] values = equation.getValuesDiapazone();
 					functionValues.clear();
-					for (double x = start; x <= stop; x += step) {
-						functionValues.add(x, function.evalf(x));
+					for (java.math.BigDecimal[] value : values) {
+						functionValues.add(value[0].doubleValue(), value[1].doubleValue());
 					}
 					
 					((XYPlot)chart.getPlot()).getDomainAxis().setRangeAboutValue(0, 10);
@@ -80,21 +81,21 @@ public class FunctionFrame extends JFrame {
 			
 			startLabel = new JLabel("start:");
 			panelButtons.add(startLabel);
-			startTextField = new JTextField(Double.toString(start)); 
+			startTextField = new JTextField(Double.toString(equation.getStart())); 
 			startTextField.setColumns(5);
 			//startTextField.addKeyListener(new EnterListener());
 			panelButtons.add(startTextField);
 			
 			stopLabel = new JLabel("stop:");
 			panelButtons.add(stopLabel);
-			stopTextField = new JTextField(Double.toString(stop)); 
+			stopTextField = new JTextField(Double.toString(equation.getStop())); 
 			stopTextField.setColumns(5);
 			//stopTextField.addKeyListener(new EnterListener());
 			panelButtons.add(stopTextField);
 			
 			stepLabel = new JLabel("step:");
 			panelButtons.add(stepLabel);
-			stepTextField = new JTextField(Double.toString(step)); 
+			stepTextField = new JTextField(Double.toString(equation.getStep())); 
 			stepTextField.setColumns(5);
 			//stepTextField.addKeyListener(new EnterListener());
 			panelButtons.add(stepTextField);
@@ -109,19 +110,15 @@ public class FunctionFrame extends JFrame {
 			headPanel.add(functionTextField);
 			
 			
-			contentPane.add(headPanel, BorderLayout.NORTH);
-			
-			JFreeChart chart = createChart();
-			ChartPanel chartPanel = new ChartPanel(chart);
-			contentPane.add(chartPanel, BorderLayout.CENTER);		
+			contentPane.add(headPanel, BorderLayout.NORTH);	
 		}
 				
 		private JFreeChart createChart() {
-			functionValues = new XYSeries("Function");	
-			
-			function = new Equation();		
-			for (double x = start; x < stop; x += step) {
-				functionValues.add(x, function.evalf(x));
+			functionValues = new XYSeries("Function");				
+			equation = new OrderEquation();		
+			java.math.BigDecimal[][] values = equation.getValuesDiapazone();
+			for (java.math.BigDecimal[] value : values) {
+				functionValues.add(value[0].doubleValue(), value[1].doubleValue());
 			}
 			
 			XYSeriesCollection dataset = new XYSeriesCollection();
@@ -143,7 +140,7 @@ public class FunctionFrame extends JFrame {
 			plot.setAxisOffset(new RectangleInsets(1.0, 1.0, 1.0, 1.0));
 			plot.setDomainGridlinePaint(Color.white);
 			plot.getDomainAxis().setRangeAboutValue(0, 10); //x
-			plot.getRangeAxis().setRangeAboutValue(7, 8); //y
+			plot.getRangeAxis().setRangeAboutValue(5, 12); //y
 			return chart;		
 		}
 		/*
