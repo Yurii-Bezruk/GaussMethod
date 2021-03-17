@@ -9,28 +9,29 @@ public abstract class Equation {
 	protected BigDecimal stop; 
 	protected BigDecimal step; 
 	protected int scale = 5;
+	protected RoundingMode mode = RoundingMode.HALF_DOWN;
 	
 	{
 		start = new BigDecimal("-3.0");
-		start.setScale(scale, RoundingMode.HALF_DOWN);
+		start.setScale(scale, mode);
 		stop = new BigDecimal("6.0");
-		stop.setScale(scale, RoundingMode.HALF_DOWN);
+		stop.setScale(scale, mode);
 		step = new BigDecimal("0.1");
-		step.setScale(scale, RoundingMode.HALF_DOWN);
+		step.setScale(scale, mode);
 	}
 	
 	public Equation(double... row) {
 		coeffs = new BigDecimal[row.length];
 		for (int i = 0; i < coeffs.length; i++) {
 			coeffs[i] = new BigDecimal(row[i]);
-			coeffs[i].setScale(scale, RoundingMode.HALF_DOWN);
+			coeffs[i].setScale(scale, mode);
 		}
 	}
 	public Equation(String... row) {
 		coeffs = new BigDecimal[row.length];
 		for (int i = 0; i < coeffs.length; i++) {
 			coeffs[i] = new BigDecimal(row[i]);
-			coeffs[i].setScale(scale, RoundingMode.HALF_DOWN);
+			coeffs[i].setScale(scale, mode);
 		}
 	}
 	public Equation(BigDecimal... row) {
@@ -44,7 +45,7 @@ public abstract class Equation {
 	public BigDecimal[][] getValuesDiapazone() {
 		java.util.List<BigDecimal[]> diapazone = new java.util.ArrayList<>();		
 		BigDecimal I = new BigDecimal(start.toString());
-		I.setScale(scale, RoundingMode.HALF_DOWN);
+		I.setScale(scale, mode);
 		for(; I.compareTo(stop) != 1; I = I.add(step)) {			
 			diapazone.add(new BigDecimal[] {I, f(I)});
 		}
@@ -87,32 +88,32 @@ public abstract class Equation {
 	}
 	public void setStart(double start) {
 		this.start = new BigDecimal(start);
-		this.start.setScale(scale, RoundingMode.HALF_DOWN);
+		this.start.setScale(scale, mode);
 	}
 	public void setStart(String start) {
 		this.start = new BigDecimal(start);
-		this.start.setScale(scale, RoundingMode.HALF_DOWN);
+		this.start.setScale(scale, mode);
 	}
 	public double getStop() {
 		return stop.doubleValue();
 	}
 	public void setStop(double stop) {
 		this.stop = new BigDecimal(stop);
-		this.stop.setScale(scale, RoundingMode.HALF_DOWN);
+		this.stop.setScale(scale, mode);
 	}
 	public void setStop(String stop) {
 		this.stop = new BigDecimal(stop);
-		this.stop.setScale(scale, RoundingMode.HALF_DOWN);
+		this.stop.setScale(scale, mode);
 	}
 	public double getStep() {
 		return step.doubleValue();
 	}
 	public void setStep(double step) {
 		this.step = new BigDecimal(step);
-		this.step.setScale(scale, RoundingMode.HALF_DOWN);
+		this.step.setScale(scale, mode);
 	}
 	public void setStep(String step) {
 		this.step = new BigDecimal(step);
-		this.step.setScale(scale, RoundingMode.HALF_DOWN);
+		this.step.setScale(scale, mode);
 	}
 }

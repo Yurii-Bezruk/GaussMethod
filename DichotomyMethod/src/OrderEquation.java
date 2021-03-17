@@ -1,10 +1,10 @@
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class OrderEquation extends Equation{
 	public OrderEquation() {
-		//this("1", "-2.8", "-6.2", "3.7");
-		this("2.1", "1.4", "-4.3", "6.1");
+		//this("2", "0", "0", "0", "-2");
+		this("1", "-2.8", "-6.2", "3.7");
+		//this("2.1", "1.4", "-4.3", "6.1");
 	}
 	public OrderEquation(double... row) {
 		super(row);
@@ -18,18 +18,17 @@ public class OrderEquation extends Equation{
 	
 	public BigDecimal f(double x) {
 		BigDecimal newX = new BigDecimal(x);
-		newX.setScale(scale, RoundingMode.HALF_DOWN);
+		newX.setScale(scale, mode);
 		return f(newX);
 	}
 	public BigDecimal f(BigDecimal x) {	
 		x = new BigDecimal(x.toString());
-		return coeffs[0].multiply(x.pow(3)).add( 
-			   coeffs[1].multiply(x.pow(2)).add(
-			   coeffs[2].multiply(x).add(
-			   coeffs[3]
-					   )
-			       )
-			   );
+		BigDecimal result = new BigDecimal("0.0");
+		result.setScale(scale, mode);
+		for (int i = 0; i < coeffs.length; i++) {
+			result = result.add(coeffs[i].multiply(x.pow(coeffs.length-i-1)));
+		}
+		return result;
 	}
 	
 }
