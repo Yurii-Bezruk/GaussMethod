@@ -2,7 +2,6 @@ import java.math.BigDecimal;
 
 public class OrderEquation extends Equation{
 	public OrderEquation() {
-		//this("2", "0", "0", "0", "-2");
 		this("1", "-2.8", "-6.2", "3.7");
 		//this("2.1", "1.4", "-4.3", "6.1");
 	}
