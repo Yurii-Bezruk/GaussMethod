@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
@@ -10,6 +12,7 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
@@ -19,16 +22,16 @@ public class MainFrame extends JFrame {
 		private JPanel contentPane;
 		
 		private JPanel headPanel;
-		private JPanel highHeadPanel;
-		private JPanel lowHeadPanel;
+		private JPanel xHeadPanel;
+		private JPanel yHeadPanel;
+		private JPanel LnHeadPanel;
 		private JTextField orderTextField;
-		private EquationPanel equationPanel;
-		private JTextField precisionTextField;
-		private JTextField rootsTextField;
+		private VectorPanel xPanel;
+		private VectorPanel yPanel;
+		private VectorPanel LnPanel;
 		private JButton solveButton;
 		
 		private XYSeries functionValues;
-		private Equation equation;
 		
 		private JPanel panelButtons;
 		private JButton plotButton;
@@ -44,7 +47,7 @@ public class MainFrame extends JFrame {
 		
 		public MainFrame() {
 			//setResizable(false);
-			setTitle("Function Frame");
+			setTitle("Interpolation Frame");
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 			setBounds(150, 150, 600, 600);
 			
@@ -52,32 +55,36 @@ public class MainFrame extends JFrame {
 			setContentPane(contentPane);
 			
 			headPanel = new JPanel(new BorderLayout());
-			highHeadPanel = new JPanel(new FlowLayout());
-			highHeadPanel.add(new JLabel("Order: "));
+			
+			xHeadPanel = new JPanel(new FlowLayout());
+			xHeadPanel.add(new JLabel("Order: "));
 			orderTextField = new JTextField("3", 2);
 			orderTextField.addActionListener(new OrderListener());
-			highHeadPanel.add(orderTextField);
-			highHeadPanel.add(new JLabel("Equation: "));
-			equationPanel = new EquationPanel(4);
-			equationPanel.setDefaultState();
-			highHeadPanel.add(equationPanel);			
-			headPanel.add(highHeadPanel, BorderLayout.NORTH);
-			lowHeadPanel = new JPanel(new FlowLayout());
-			lowHeadPanel.add(new JLabel("Precision: "));
-			precisionTextField = new JTextField("0.0001", 4);
-			lowHeadPanel.add(precisionTextField);
-			lowHeadPanel.add(new JLabel("Roots: "));
-			rootsTextField = new JTextField("", 30);
-			lowHeadPanel.add(rootsTextField);
+			xHeadPanel.add(orderTextField);
+			xHeadPanel.add(new JLabel("x: "));
+			xPanel = new VectorPanel(4);
+			xPanel.setDefaultState();
+			xHeadPanel.add(xPanel);			
+			headPanel.add(xHeadPanel, BorderLayout.NORTH);
+			
+			yHeadPanel = new JPanel(new FlowLayout());
+			yHeadPanel.add(new JLabel("y: "));
+			yPanel = new VectorPanel(4);
+			yPanel.setDefaultState();
+			yHeadPanel.add(yPanel);
+			headPanel.add(yHeadPanel, BorderLayout.CENTER);
+			
+			LnHeadPanel = new JPanel(new FlowLayout());
+			LnHeadPanel.add(new JLabel("Ln: "));
+			LnPanel = new VectorPanel(4);
+			LnPanel.setDefaultState();
+			LnHeadPanel.add(LnPanel);
 			solveButton = new JButton("Solve");
 			solveButton.addActionListener(new SolveButtonListener());
-			lowHeadPanel.add(solveButton);
-			headPanel.add(lowHeadPanel, BorderLayout.SOUTH);
-			contentPane.add(headPanel, BorderLayout.NORTH);	
+			LnHeadPanel.add(solveButton);
+			headPanel.add(LnHeadPanel, BorderLayout.SOUTH);
 			
-			JFreeChart chart = createChart();
-			ChartPanel chartPanel = new ChartPanel(chart);
-			contentPane.add(chartPanel, BorderLayout.CENTER);	
+			contentPane.add(headPanel, BorderLayout.NORTH);		
 			
 			panelButtons = new JPanel();
 			contentPane.add(panelButtons, BorderLayout.SOUTH);
@@ -88,31 +95,34 @@ public class MainFrame extends JFrame {
 			
 			startLabel = new JLabel("start:");
 			panelButtons.add(startLabel);
-			startTextField = new JTextField(Double.toString(equation.getStart()), 3); 
+			startTextField = new JTextField(Double.toString(-5), 3); 
 			startTextField.addActionListener(new PlotChanger());
 			panelButtons.add(startTextField);
 			
 			stopLabel = new JLabel("stop:");
 			panelButtons.add(stopLabel);
-			stopTextField = new JTextField(Double.toString(equation.getStop()), 3); 
+			stopTextField = new JTextField(Double.toString(5), 3); 
 			stopTextField.addActionListener(new PlotChanger());
 			panelButtons.add(stopTextField);
 			
 			stepLabel = new JLabel("step:");
 			panelButtons.add(stepLabel);
-			stepTextField = new JTextField(Double.toString(equation.getStep()), 3); 
+			stepTextField = new JTextField(Double.toString(1), 3); 
 			stepTextField.addActionListener(new PlotChanger());
 			panelButtons.add(stepTextField);
 			
+			JFreeChart chart = createChart();
+			ChartPanel chartPanel = new ChartPanel(chart);
+			contentPane.add(chartPanel, BorderLayout.CENTER);
 			
 		}
 				
 		private JFreeChart createChart() {
 			functionValues = new XYSeries("Function");				
-			equation = new OrderEquation(equationPanel.getValues());		
-			java.math.BigDecimal[][] values = equation.getValuesDiapazone();
-			for (java.math.BigDecimal[] value : values) {
-				functionValues.add(value[0].doubleValue(), value[1].doubleValue());
+			double[] x = {-4, -3, -2, -1, 0};
+			double[] y = {-2, 0, 1, -1, -3};
+			for (int i = 0; i < x.length; i++) {
+				functionValues.add(x[i], y[i]);
 			}
 			
 			XYSeriesCollection dataset = new XYSeriesCollection();
@@ -124,24 +134,32 @@ public class MainFrame extends JFrame {
 					dataset, //data
 					PlotOrientation.VERTICAL, true, //include legend
 					true, //tooltips
-					false //urls
+					true //urls
 			);
 			//CUSTOMIZATION
 			chart.setBackgroundPaint(Color.white);
 			
 			XYPlot plot = (XYPlot) chart.getPlot();
+			plot.setRangeZeroBaselineVisible(true);
+			plot.setDomainZeroBaselineVisible(true);
 			plot.setBackgroundPaint(Color.lightGray);
 			plot.setAxisOffset(new RectangleInsets(1.0, 1.0, 1.0, 1.0));
 			plot.setDomainGridlinePaint(Color.white);
-			double middle = (equation.getStop()+equation.getStart()) / 2;
-			plot.getDomainAxis().setRangeAboutValue(middle, (equation.getStop() - middle)*2); //x
-			plot.getRangeAxis().setRangeAboutValue(0, 40); //y
+			double middle = (Double.parseDouble(startTextField.getText())+Double.parseDouble(stopTextField.getText())) / 2;
+			plot.getDomainAxis().setRangeAboutValue(middle, (Double.parseDouble(stopTextField.getText()) - middle)*2); //x
+			plot.getRangeAxis().setRangeAboutValue(0, 10); //y
+			
+			plot.getRenderer().setBaseShape(
+				    new Rectangle2D.Double(-20.0, -20.0, 40.0, 40.0));
+			/*LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
+			renderer.setBaseShapesVisible(true);
+			renderer.setSeriesShape(0, new Ellipse2D.Double(-3d, -3d, 6d, 6d));*/
 			return chart;		
 		}
 		private class OrderListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				int order;
+				/*int order;
 				try {
 					order = Integer.parseInt(orderTextField.getText());					
 				} catch(NumberFormatException exception) {
@@ -152,14 +170,14 @@ public class MainFrame extends JFrame {
 				equationPanel = new EquationPanel(order + 1);
 				highHeadPanel.add(equationPanel);
 				MainFrame.this.revalidate();
-				MainFrame.this.repaint();
+				MainFrame.this.repaint();*/
 			}
 			
 		}
 		private class PlotChanger implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				try {
+				/*try {
 					equation.setStart(startTextField.getText());
 					equation.setStop(stopTextField.getText());
 					equation.setStep(stepTextField.getText());
@@ -179,7 +197,7 @@ public class MainFrame extends JFrame {
 				} catch(IllegalArgumentException exception) {
 					JOptionPane.showMessageDialog(MainFrame.this, "Uncorrect limits.");
 					return;
-				}
+				}*/
 			}
 			
 		}
@@ -187,7 +205,7 @@ public class MainFrame extends JFrame {
 		private class SolveButtonListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				BigDecimal precision = null;
+				/*BigDecimal precision = null;
 				try {
 					equation = new OrderEquation(equationPanel.getValues());
 					equation.setStart(startTextField.getText());
@@ -198,8 +216,8 @@ public class MainFrame extends JFrame {
 					JOptionPane.showMessageDialog(MainFrame.this, "Please, input numbers");
 					return;
 				}
-				rootsTextField.setText(Arrays.toString(equation.solve(precision)));
-			}					
+				rootsTextField.setText(Arrays.toString(equation.solve(precision)));*/
+			}				
 		}
 
 }
