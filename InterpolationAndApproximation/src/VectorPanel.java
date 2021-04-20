@@ -7,12 +7,15 @@ import javax.swing.JTextField;
 public class VectorPanel extends JPanel {
 	private static final long serialVersionUID = -6496041102969831227L;
 	private int count = 4;
+	private JLabel label;
 	private JTextField[] vectorCoeffs;
 	
-	public VectorPanel(int initialCount) {
+	public VectorPanel(String label, int initialCount) {
 		super(new FlowLayout());
+		this.label = new JLabel(label);
 		count = initialCount;
 		vectorCoeffs = new JTextField[count];
+		this.add(this.label);
 		for (int i = 0; i < count; i++) {
 			vectorCoeffs[i] = new JTextField("");
 			vectorCoeffs[i].setColumns(3);

@@ -1,10 +1,6 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Rectangle2D;
-import java.math.BigDecimal;
-import java.util.Arrays;
 
 import javax.swing.*;
 import org.jfree.chart.ChartFactory;
@@ -12,7 +8,6 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
@@ -22,9 +17,9 @@ public class MainFrame extends JFrame {
 		private JPanel contentPane;
 		
 		private JPanel headPanel;
-		private JPanel xHeadPanel;
-		private JPanel yHeadPanel;
-		private JPanel LnHeadPanel;
+		private JPanel northHeadPanel;
+		private JPanel centerHeadPanel;
+		private JPanel southHeadPanel;
 		private JTextField orderTextField;
 		private VectorPanel xPanel;
 		private VectorPanel yPanel;
@@ -56,33 +51,34 @@ public class MainFrame extends JFrame {
 			
 			headPanel = new JPanel(new BorderLayout());
 			
-			xHeadPanel = new JPanel(new FlowLayout());
-			xHeadPanel.add(new JLabel("Order: "));
+			northHeadPanel = new JPanel(new FlowLayout());
+			northHeadPanel.add(new JLabel("Order: "));
 			orderTextField = new JTextField("3", 2);
-			orderTextField.addActionListener(new OrderListener());
-			xHeadPanel.add(orderTextField);
-			xHeadPanel.add(new JLabel("x: "));
-			xPanel = new VectorPanel(4);
+			orderTextField.addActionListener(new OrderListener());			
+			northHeadPanel.add(orderTextField);
+			headPanel.add(northHeadPanel, BorderLayout.NORTH);
+			
+			centerHeadPanel = new JPanel(new BorderLayout());
+			
+			xPanel = new VectorPanel("x: ", 4);
 			xPanel.setDefaultState();
-			xHeadPanel.add(xPanel);			
-			headPanel.add(xHeadPanel, BorderLayout.NORTH);
+			centerHeadPanel.add(xPanel, BorderLayout.NORTH);
 			
-			yHeadPanel = new JPanel(new FlowLayout());
-			yHeadPanel.add(new JLabel("y: "));
-			yPanel = new VectorPanel(4);
+			yPanel = new VectorPanel("y: ", 4);
 			yPanel.setDefaultState();
-			yHeadPanel.add(yPanel);
-			headPanel.add(yHeadPanel, BorderLayout.CENTER);
+			centerHeadPanel.add(yPanel, BorderLayout.CENTER);		
 			
-			LnHeadPanel = new JPanel(new FlowLayout());
-			LnHeadPanel.add(new JLabel("Ln: "));
-			LnPanel = new VectorPanel(4);
+			LnPanel = new VectorPanel("L: ", 4);
 			LnPanel.setDefaultState();
-			LnHeadPanel.add(LnPanel);
+			centerHeadPanel.add(LnPanel, BorderLayout.SOUTH);
+			
+			headPanel.add(centerHeadPanel, BorderLayout.CENTER);
+			
+			southHeadPanel = new JPanel(new FlowLayout());
 			solveButton = new JButton("Solve");
 			solveButton.addActionListener(new SolveButtonListener());
-			LnHeadPanel.add(solveButton);
-			headPanel.add(LnHeadPanel, BorderLayout.SOUTH);
+			southHeadPanel.add(solveButton);
+			headPanel.add(southHeadPanel, BorderLayout.SOUTH);
 			
 			contentPane.add(headPanel, BorderLayout.NORTH);		
 			
@@ -128,7 +124,7 @@ public class MainFrame extends JFrame {
 			XYSeriesCollection dataset = new XYSeriesCollection();
 			dataset.addSeries(functionValues);
 			
-			chart = ChartFactory.createXYLineChart("", //chart title
+			chart = ChartFactory.createScatterPlot("", //chart title
 					"X", //x axis label
 					"Y", //y axis label
 					dataset, //data
@@ -147,13 +143,7 @@ public class MainFrame extends JFrame {
 			plot.setDomainGridlinePaint(Color.white);
 			double middle = (Double.parseDouble(startTextField.getText())+Double.parseDouble(stopTextField.getText())) / 2;
 			plot.getDomainAxis().setRangeAboutValue(middle, (Double.parseDouble(stopTextField.getText()) - middle)*2); //x
-			plot.getRangeAxis().setRangeAboutValue(0, 10); //y
-			
-			plot.getRenderer().setBaseShape(
-				    new Rectangle2D.Double(-20.0, -20.0, 40.0, 40.0));
-			/*LineAndShapeRenderer renderer = (LineAndShapeRenderer) plot.getRenderer();
-			renderer.setBaseShapesVisible(true);
-			renderer.setSeriesShape(0, new Ellipse2D.Double(-3d, -3d, 6d, 6d));*/
+			plot.getRangeAxis().setRangeAboutValue(0, 10); //y			
 			return chart;		
 		}
 		private class OrderListener implements ActionListener {
