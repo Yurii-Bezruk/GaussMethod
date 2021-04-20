@@ -27,14 +27,14 @@ public class EquationPanel extends JPanel {
 	}
 	public void setDefaultState() {
 		try {
-//			vectorCoeffs[0].setText("1");
-//			vectorCoeffs[1].setText("-2.8");
-//			vectorCoeffs[2].setText("-6.2");
-//			vectorCoeffs[3].setText("3.7");
-			vectorCoeffs[0].setText("2.1");
-			vectorCoeffs[1].setText("1.4");
-			vectorCoeffs[2].setText("-4.3");
-			vectorCoeffs[3].setText("6.1");
+			vectorCoeffs[0].setText("1");
+			vectorCoeffs[1].setText("-2.8");
+			vectorCoeffs[2].setText("-6.2");
+			vectorCoeffs[3].setText("3.7");
+//			vectorCoeffs[0].setText("2.1");
+//			vectorCoeffs[1].setText("1.4");
+//			vectorCoeffs[2].setText("-4.3");
+//			vectorCoeffs[3].setText("6.1");
 		}catch(ArrayIndexOutOfBoundsException e) {}
 	}
 	public void setValueAt(int index, double value){
