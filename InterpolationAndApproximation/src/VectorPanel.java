@@ -22,12 +22,11 @@ public class VectorPanel extends JPanel {
 			this.add(vectorCoeffs[i]);
 		}
 	}
-	public void setDefaultState() {
+	public void setValues(double[] values) {
 		try {
-			vectorCoeffs[0].setText("1");
-			vectorCoeffs[1].setText("-2.8");
-			vectorCoeffs[2].setText("-6.2");
-			vectorCoeffs[3].setText("3.7");
+			for(int i = 0; i < count; i++) {
+				vectorCoeffs[i].setText(Double.toString(values[i]));
+			}
 		}catch(ArrayIndexOutOfBoundsException e) {}
 	}
 	public void setValueAt(int index, double value){
@@ -36,10 +35,12 @@ public class VectorPanel extends JPanel {
 	public double getValueAt(int index) throws NumberFormatException {
 		return Double.parseDouble(vectorCoeffs[index].getText());
 	}
-	public String[] getValues() {
-		String[] values = new String[count];
+	public double[] getValues() {
+		double[] values = new double[count];
 		for (int i = 0; i < values.length; i++) {
-			values[i] = vectorCoeffs[i].getText();
+			try {
+				values[i] = Double.parseDouble(vectorCoeffs[i].getText());
+			}catch(NumberFormatException e) {}
 		}
 		return values;
 	}

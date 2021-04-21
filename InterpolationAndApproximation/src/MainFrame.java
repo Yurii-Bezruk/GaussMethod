@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -27,6 +28,13 @@ public class MainFrame extends JFrame {
 		private JButton solveButton;
 		
 		private XYSeries functionValues;
+		private JFreeChart chart;
+		private ChartPanel chartPanel;
+		
+		private double start = -7;
+		private double stop = 3;
+		private double step = 1;
+		
 		
 		private JPanel panelButtons;
 		private JButton plotButton;
@@ -36,8 +44,6 @@ public class MainFrame extends JFrame {
 		private JTextField startTextField; 
 		private JTextField stopTextField; 
 		private JTextField stepTextField; 
-		
-		private JFreeChart chart;
 		
 		
 		public MainFrame() {
@@ -53,23 +59,22 @@ public class MainFrame extends JFrame {
 			
 			northHeadPanel = new JPanel(new FlowLayout());
 			northHeadPanel.add(new JLabel("Order: "));
-			orderTextField = new JTextField("3", 2);
+			orderTextField = new JTextField("5", 2);
 			orderTextField.addActionListener(new OrderListener());			
 			northHeadPanel.add(orderTextField);
 			headPanel.add(northHeadPanel, BorderLayout.NORTH);
 			
 			centerHeadPanel = new JPanel(new BorderLayout());
 			
-			xPanel = new VectorPanel("x: ", 4);
-			xPanel.setDefaultState();
+			xPanel = new VectorPanel("x: ", 5);
+			xPanel.setValues(new double[] {-4, -3, -2, -1, 0});
 			centerHeadPanel.add(xPanel, BorderLayout.NORTH);
 			
-			yPanel = new VectorPanel("y: ", 4);
-			yPanel.setDefaultState();
+			yPanel = new VectorPanel("y: ", 5);
+			yPanel.setValues(new double[] {-2, 0, 1, -1, -3});
 			centerHeadPanel.add(yPanel, BorderLayout.CENTER);		
 			
-			LnPanel = new VectorPanel("L: ", 4);
-			LnPanel.setDefaultState();
+			LnPanel = new VectorPanel("L: ", 5);
 			centerHeadPanel.add(LnPanel, BorderLayout.SOUTH);
 			
 			headPanel.add(centerHeadPanel, BorderLayout.CENTER);
@@ -91,32 +96,30 @@ public class MainFrame extends JFrame {
 			
 			startLabel = new JLabel("start:");
 			panelButtons.add(startLabel);
-			startTextField = new JTextField(Double.toString(-5), 3); 
+			startTextField = new JTextField(Double.toString(start), 3); 
 			startTextField.addActionListener(new PlotChanger());
 			panelButtons.add(startTextField);
 			
 			stopLabel = new JLabel("stop:");
 			panelButtons.add(stopLabel);
-			stopTextField = new JTextField(Double.toString(5), 3); 
+			stopTextField = new JTextField(Double.toString(stop), 3); 
 			stopTextField.addActionListener(new PlotChanger());
 			panelButtons.add(stopTextField);
 			
 			stepLabel = new JLabel("step:");
 			panelButtons.add(stepLabel);
-			stepTextField = new JTextField(Double.toString(1), 3); 
+			stepTextField = new JTextField(Double.toString(step), 3); 
 			stepTextField.addActionListener(new PlotChanger());
 			panelButtons.add(stepTextField);
 			
-			JFreeChart chart = createChart();
-			ChartPanel chartPanel = new ChartPanel(chart);
-			contentPane.add(chartPanel, BorderLayout.CENTER);
-			
+			//JFreeChart chart = createChart();
+			createChart(xPanel.getValues(), yPanel.getValues(), Color.RED);
+			chartPanel = new ChartPanel(chart);
+			contentPane.add(chartPanel, BorderLayout.CENTER);			
 		}
 				
-		private JFreeChart createChart() {
-			functionValues = new XYSeries("Function");				
-			double[] x = {-4, -3, -2, -1, 0};
-			double[] y = {-2, 0, 1, -1, -3};
+		private void createChart(double[] x, double[] y, Color color) {
+			functionValues = new XYSeries("Points");
 			for (int i = 0; i < x.length; i++) {
 				functionValues.add(x[i], y[i]);
 			}
@@ -134,60 +137,85 @@ public class MainFrame extends JFrame {
 			);
 			//CUSTOMIZATION
 			chart.setBackgroundPaint(Color.white);
+			ChartUtilities.applyCurrentTheme(chart);
 			
 			XYPlot plot = (XYPlot) chart.getPlot();
 			plot.setRangeZeroBaselineVisible(true);
 			plot.setDomainZeroBaselineVisible(true);
 			plot.setBackgroundPaint(Color.lightGray);
+			plot.getRenderer().setSeriesPaint(0, color);
 			plot.setAxisOffset(new RectangleInsets(1.0, 1.0, 1.0, 1.0));
 			plot.setDomainGridlinePaint(Color.white);
-			double middle = (Double.parseDouble(startTextField.getText())+Double.parseDouble(stopTextField.getText())) / 2;
-			plot.getDomainAxis().setRangeAboutValue(middle, (Double.parseDouble(stopTextField.getText()) - middle)*2); //x
-			plot.getRangeAxis().setRangeAboutValue(0, 10); //y			
-			return chart;		
+			double middle = (start + stop) / 2;
+			plot.getDomainAxis().setRangeAboutValue(middle, (stop - middle) * 2); //x
+			plot.getRangeAxis().setRangeAboutValue(0, 10); //y				
 		}
 		private class OrderListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				/*int order;
+				int order;
 				try {
-					order = Integer.parseInt(orderTextField.getText());					
+					order = Integer.parseInt(orderTextField.getText());
+					if(order <= 0) {
+						JOptionPane.showMessageDialog(MainFrame.this, "Please, input number > 0");
+						return;
+					}
 				} catch(NumberFormatException exception) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Please, input integer number");
+					JOptionPane.showMessageDialog(MainFrame.this, "Please, input number");
 					return;
 				}
-				highHeadPanel.remove(equationPanel);
-				equationPanel = new EquationPanel(order + 1);
-				highHeadPanel.add(equationPanel);
+				centerHeadPanel.remove(xPanel);
+				centerHeadPanel.remove(yPanel);
+				centerHeadPanel.remove(LnPanel);
+				
+				double[] xValues = xPanel.getValues();
+				xPanel = new VectorPanel("x: ", order);
+				xPanel.setValues(xValues);
+				centerHeadPanel.add(xPanel, BorderLayout.NORTH);
+				
+				double[] yValues = yPanel.getValues();
+				yPanel = new VectorPanel("y: ", order);
+				yPanel.setValues(yValues);
+				centerHeadPanel.add(yPanel, BorderLayout.CENTER);
+				
+				LnPanel = new VectorPanel("L: ", order);
+				centerHeadPanel.add(LnPanel, BorderLayout.SOUTH);
+				
+				createChart(xPanel.getValues(), yPanel.getValues(), Color.RED);
+				contentPane.remove(chartPanel);
+				chartPanel = new ChartPanel(chart);
+				contentPane.add(chartPanel, BorderLayout.CENTER);
 				MainFrame.this.revalidate();
-				MainFrame.this.repaint();*/
+				MainFrame.this.repaint();
 			}
 			
 		}
 		private class PlotChanger implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				/*try {
-					equation.setStart(startTextField.getText());
-					equation.setStop(stopTextField.getText());
-					equation.setStep(stepTextField.getText());
+				try {
+					start = Double.parseDouble(startTextField.getText());
+					stop = Double.parseDouble(stopTextField.getText());
+					step = Double.parseDouble(stepTextField.getText());
 				} catch(NumberFormatException exception) {
 					JOptionPane.showMessageDialog(MainFrame.this, "Please, input numbers");
 					return;
 				}
-				java.math.BigDecimal[][] values = equation.getValuesDiapazone();
-				functionValues.clear();
-				for (java.math.BigDecimal[] value : values) {
-					functionValues.add(value[0].doubleValue(), value[1].doubleValue());
+				functionValues = new XYSeries("Function");				
+				double[] x = xPanel.getValues();
+				double[] y = yPanel.getValues();
+				for (int i = 0; i < x.length; i++) {
+					functionValues.add(x[i], y[i]);
 				}
-				double middle = (equation.getStop()+equation.getStart()) / 2;
+				double middle = (start + stop) / 2;
 				try {
-					((XYPlot)chart.getPlot()).getDomainAxis().setRangeAboutValue(middle, (equation.getStop() - middle)*2);
-					((XYPlot)chart.getPlot()).getRangeAxis().setRangeAboutValue(0, 40);
+					XYPlot plot = (XYPlot) chart.getPlot();
+					plot.getDomainAxis().setRangeAboutValue(middle, (stop - middle) * 2); //x
+					plot.getRangeAxis().setRangeAboutValue(0, 10);
 				} catch(IllegalArgumentException exception) {
 					JOptionPane.showMessageDialog(MainFrame.this, "Uncorrect limits.");
 					return;
-				}*/
+				}
 			}
 			
 		}
@@ -195,18 +223,30 @@ public class MainFrame extends JFrame {
 		private class SolveButtonListener implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				/*BigDecimal precision = null;
-				try {
-					equation = new OrderEquation(equationPanel.getValues());
-					equation.setStart(startTextField.getText());
-					equation.setStop(stopTextField.getText());
-					equation.setStep(stepTextField.getText());
-					precision = new BigDecimal(precisionTextField.getText());
-				} catch(NumberFormatException e) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Please, input numbers");
-					return;
+				double[] x = new double[Integer.parseInt(orderTextField.getText())];
+				double[] y = new double[x.length];
+				for (int i = 0; i < x.length; i++) {
+					try {
+						x[i] = xPanel.getValueAt(i); 
+						y[i] = yPanel.getValueAt(i);
+					}catch(NumberFormatException e) {
+						JOptionPane.showMessageDialog(MainFrame.this, "Please, input numbers.");
+						return;
+					}
 				}
-				rootsTextField.setText(Arrays.toString(equation.solve(precision)));*/
+				LagrangePolinom lagrange = new LagrangePolinom(x, y);
+				double[] Ln = new double[x.length];
+				for (int i = 0; i < x.length; i++) {
+					Ln[i] = lagrange.Ln(x[i]);
+				}
+				LnPanel.setValues(Ln);
+				
+				createChart(x, y, Color.BLUE);
+				contentPane.remove(chartPanel);
+				chartPanel = new ChartPanel(chart);
+				contentPane.add(chartPanel, BorderLayout.CENTER);
+				MainFrame.this.revalidate();
+				MainFrame.this.repaint();
 			}				
 		}
 

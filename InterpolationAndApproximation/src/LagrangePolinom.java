@@ -1,11 +1,11 @@
 import java.util.Arrays;
 
-public class Polinom {
+public class LagrangePolinom {
 	private double[] X; 
 	private double[] Y;
 	private int n;
 	
-	public Polinom(double[] X, double[] Y) {
+	public LagrangePolinom(double[] X, double[] Y) {
 		this.n = X.length;
 		this.X = Arrays.copyOf(X, n);
 		this.Y = Arrays.copyOf(Y, n);
