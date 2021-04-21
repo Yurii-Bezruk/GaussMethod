@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtilities;
@@ -13,7 +14,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
-public class MainFrame extends JFrame {
+public class ApproximationFrame extends JFrame {
 		private static final long serialVersionUID = 1L;
 		private JPanel contentPane;
 		
@@ -46,7 +47,7 @@ public class MainFrame extends JFrame {
 		private JTextField stepTextField; 
 		
 		
-		public MainFrame() {
+		public ApproximationFrame() {
 			//setResizable(false);
 			setTitle("Interpolation Frame");
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -157,11 +158,11 @@ public class MainFrame extends JFrame {
 				try {
 					order = Integer.parseInt(orderTextField.getText());
 					if(order <= 0) {
-						JOptionPane.showMessageDialog(MainFrame.this, "Please, input number > 0");
+						JOptionPane.showMessageDialog(ApproximationFrame.this, "Please, input number > 0");
 						return;
 					}
 				} catch(NumberFormatException exception) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Please, input number");
+					JOptionPane.showMessageDialog(ApproximationFrame.this, "Please, input number");
 					return;
 				}
 				centerHeadPanel.remove(xPanel);
@@ -185,8 +186,8 @@ public class MainFrame extends JFrame {
 				contentPane.remove(chartPanel);
 				chartPanel = new ChartPanel(chart);
 				contentPane.add(chartPanel, BorderLayout.CENTER);
-				MainFrame.this.revalidate();
-				MainFrame.this.repaint();
+				ApproximationFrame.this.revalidate();
+				ApproximationFrame.this.repaint();
 			}
 			
 		}
@@ -198,7 +199,7 @@ public class MainFrame extends JFrame {
 					stop = Double.parseDouble(stopTextField.getText());
 					step = Double.parseDouble(stepTextField.getText());
 				} catch(NumberFormatException exception) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Please, input numbers");
+					JOptionPane.showMessageDialog(ApproximationFrame.this, "Please, input numbers");
 					return;
 				}
 				functionValues = new XYSeries("Function");				
@@ -213,7 +214,7 @@ public class MainFrame extends JFrame {
 					plot.getDomainAxis().setRangeAboutValue(middle, (stop - middle) * 2); //x
 					plot.getRangeAxis().setRangeAboutValue(0, 10);
 				} catch(IllegalArgumentException exception) {
-					JOptionPane.showMessageDialog(MainFrame.this, "Uncorrect limits.");
+					JOptionPane.showMessageDialog(ApproximationFrame.this, "Uncorrect limits.");
 					return;
 				}
 			}
@@ -230,7 +231,7 @@ public class MainFrame extends JFrame {
 						x[i] = xPanel.getValueAt(i); 
 						y[i] = yPanel.getValueAt(i);
 					}catch(NumberFormatException e) {
-						JOptionPane.showMessageDialog(MainFrame.this, "Please, input numbers.");
+						JOptionPane.showMessageDialog(ApproximationFrame.this, "Please, input numbers.");
 						return;
 					}
 				}
@@ -245,9 +246,9 @@ public class MainFrame extends JFrame {
 				contentPane.remove(chartPanel);
 				chartPanel = new ChartPanel(chart);
 				contentPane.add(chartPanel, BorderLayout.CENTER);
-				MainFrame.this.revalidate();
-				MainFrame.this.repaint();
+				ApproximationFrame.this.revalidate();
+				ApproximationFrame.this.repaint();
 			}				
 		}
 
-}
+	}
