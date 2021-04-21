@@ -21,36 +21,37 @@ public class ApproximationFrame extends JFrame {
 		private JPanel headPanel;
 		private JPanel northHeadPanel;
 		private JPanel centerHeadPanel;
+		private JPanel polinomsPanel;
+		private JPanel firstOrderPanel;
+		private JPanel secondOrderPanel;
 		private JPanel southHeadPanel;
 		private JTextField orderTextField;
 		private VectorPanel xPanel;
 		private VectorPanel yPanel;
-		private VectorPanel LnPanel;
+		private JLabel firstOrderLabel;
+		private JLabel secondOrderLabel;
 		private JButton solveButton;
 		
 		private XYSeries functionValues;
 		private JFreeChart chart;
 		private ChartPanel chartPanel;
 		
-		private double start = -7;
+		private double start = -3;
 		private double stop = 3;
-		private double step = 1;
 		
 		
 		private JPanel panelButtons;
 		private JButton plotButton;
 		private JLabel startLabel; 
 		private JLabel stopLabel; 
-		private JLabel stepLabel; 
 		private JTextField startTextField; 
-		private JTextField stopTextField; 
-		private JTextField stepTextField; 
+		private JTextField stopTextField;  
 		
 		
 		public ApproximationFrame() {
 			//setResizable(false);
-			setTitle("Interpolation Frame");
-			setDefaultCloseOperation(EXIT_ON_CLOSE);
+			setTitle("Approximation Frame");
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			setBounds(150, 150, 600, 600);
 			
 			contentPane = new JPanel(new BorderLayout());
@@ -68,15 +69,23 @@ public class ApproximationFrame extends JFrame {
 			centerHeadPanel = new JPanel(new BorderLayout());
 			
 			xPanel = new VectorPanel("x: ", 5);
-			xPanel.setValues(new double[] {-4, -3, -2, -1, 0});
+			xPanel.setValues(new double[] {-2, -1, 0, 1, 2});
 			centerHeadPanel.add(xPanel, BorderLayout.NORTH);
 			
 			yPanel = new VectorPanel("y: ", 5);
-			yPanel.setValues(new double[] {-2, 0, 1, -1, -3});
+			yPanel.setValues(new double[] {-4.8, 0, 3.2, 4, 2.8});
 			centerHeadPanel.add(yPanel, BorderLayout.CENTER);		
 			
-			LnPanel = new VectorPanel("L: ", 5);
-			centerHeadPanel.add(LnPanel, BorderLayout.SOUTH);
+			polinomsPanel = new JPanel(new BorderLayout());
+			firstOrderPanel = new JPanel(new FlowLayout());
+			secondOrderPanel = new JPanel(new FlowLayout());
+			firstOrderLabel = new JLabel("P1(x)");
+			secondOrderLabel = new JLabel("P2(x)");
+			firstOrderPanel.add(firstOrderLabel);
+			secondOrderPanel.add(secondOrderLabel);
+			polinomsPanel.add(firstOrderPanel, BorderLayout.NORTH);
+			polinomsPanel.add(secondOrderPanel, BorderLayout.SOUTH);
+			centerHeadPanel.add(polinomsPanel, BorderLayout.SOUTH);
 			
 			headPanel.add(centerHeadPanel, BorderLayout.CENTER);
 			
@@ -107,13 +116,6 @@ public class ApproximationFrame extends JFrame {
 			stopTextField.addActionListener(new PlotChanger());
 			panelButtons.add(stopTextField);
 			
-			stepLabel = new JLabel("step:");
-			panelButtons.add(stepLabel);
-			stepTextField = new JTextField(Double.toString(step), 3); 
-			stepTextField.addActionListener(new PlotChanger());
-			panelButtons.add(stepTextField);
-			
-			//JFreeChart chart = createChart();
 			createChart(xPanel.getValues(), yPanel.getValues(), Color.RED);
 			chartPanel = new ChartPanel(chart);
 			contentPane.add(chartPanel, BorderLayout.CENTER);			
@@ -167,7 +169,6 @@ public class ApproximationFrame extends JFrame {
 				}
 				centerHeadPanel.remove(xPanel);
 				centerHeadPanel.remove(yPanel);
-				centerHeadPanel.remove(LnPanel);
 				
 				double[] xValues = xPanel.getValues();
 				xPanel = new VectorPanel("x: ", order);
@@ -178,9 +179,6 @@ public class ApproximationFrame extends JFrame {
 				yPanel = new VectorPanel("y: ", order);
 				yPanel.setValues(yValues);
 				centerHeadPanel.add(yPanel, BorderLayout.CENTER);
-				
-				LnPanel = new VectorPanel("L: ", order);
-				centerHeadPanel.add(LnPanel, BorderLayout.SOUTH);
 				
 				createChart(xPanel.getValues(), yPanel.getValues(), Color.RED);
 				contentPane.remove(chartPanel);
@@ -197,7 +195,6 @@ public class ApproximationFrame extends JFrame {
 				try {
 					start = Double.parseDouble(startTextField.getText());
 					stop = Double.parseDouble(stopTextField.getText());
-					step = Double.parseDouble(stepTextField.getText());
 				} catch(NumberFormatException exception) {
 					JOptionPane.showMessageDialog(ApproximationFrame.this, "Please, input numbers");
 					return;
@@ -235,12 +232,13 @@ public class ApproximationFrame extends JFrame {
 						return;
 					}
 				}
-				LagrangePolinom lagrange = new LagrangePolinom(x, y);
-				double[] Ln = new double[x.length];
+				ApproximationPolinom polinom = new FirstOrderPolinom(x, y);
+				firstOrderLabel.setText(polinom + " Error: " + String.format("%.4f", polinom.getRootMeanSquareError()));
+				polinom = new SecondOrderPolinom(x, y);
 				for (int i = 0; i < x.length; i++) {
-					Ln[i] = lagrange.Ln(x[i]);
+					y[i] = polinom.P(x[i]);
 				}
-				LnPanel.setValues(Ln);
+				secondOrderLabel.setText(polinom + " Error: " + String.format("%.4f", polinom.getRootMeanSquareError()));
 				
 				createChart(x, y, Color.BLUE);
 				contentPane.remove(chartPanel);

@@ -29,6 +29,6 @@ public class FirstOrderPolinom extends ApproximationPolinom {
 	}
 	@Override
 	public String toString() {
-		return "P(x) = "+a+"x + "+b;
+		return "P1(x) = "+String.format("%.3f", a)+"x + "+String.format("%.3f", b);
 	}
 }

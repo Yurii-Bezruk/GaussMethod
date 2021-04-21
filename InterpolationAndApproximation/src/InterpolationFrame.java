@@ -33,23 +33,20 @@ public class InterpolationFrame extends JFrame {
 		
 		private double start = -7;
 		private double stop = 3;
-		private double step = 1;
 		
 		
 		private JPanel panelButtons;
 		private JButton plotButton;
 		private JLabel startLabel; 
 		private JLabel stopLabel; 
-		private JLabel stepLabel; 
 		private JTextField startTextField; 
 		private JTextField stopTextField; 
-		private JTextField stepTextField; 
 		
 		
 		public InterpolationFrame() {
 			//setResizable(false);
 			setTitle("Interpolation Frame");
-			setDefaultCloseOperation(EXIT_ON_CLOSE);
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			setBounds(150, 150, 600, 600);
 			
 			contentPane = new JPanel(new BorderLayout());
@@ -105,12 +102,6 @@ public class InterpolationFrame extends JFrame {
 			stopTextField = new JTextField(Double.toString(stop), 3); 
 			stopTextField.addActionListener(new PlotChanger());
 			panelButtons.add(stopTextField);
-			
-			stepLabel = new JLabel("step:");
-			panelButtons.add(stepLabel);
-			stepTextField = new JTextField(Double.toString(step), 3); 
-			stepTextField.addActionListener(new PlotChanger());
-			panelButtons.add(stepTextField);
 			
 			//JFreeChart chart = createChart();
 			createChart(xPanel.getValues(), yPanel.getValues(), Color.RED);
@@ -196,7 +187,6 @@ public class InterpolationFrame extends JFrame {
 				try {
 					start = Double.parseDouble(startTextField.getText());
 					stop = Double.parseDouble(stopTextField.getText());
-					step = Double.parseDouble(stepTextField.getText());
 				} catch(NumberFormatException exception) {
 					JOptionPane.showMessageDialog(InterpolationFrame.this, "Please, input numbers");
 					return;

@@ -36,6 +36,6 @@ public class SecondOrderPolinom extends FirstOrderPolinom {
 	
 	@Override
 	public String toString() {
-		return "P(x) = "+a+"x^2 + "+b+"x + "+c;
+		return "P2(x) = "+String.format("%.3f", a)+"x^2 + "+String.format("%.3f", b)+"x + "+String.format("%.3f", c);
 	}
 }
