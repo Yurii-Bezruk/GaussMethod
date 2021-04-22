@@ -10,6 +10,7 @@ public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 2269971701250845501L;
 	
 	public MainFrame() {
+		setResizable(false);
 		setTitle("Interpolation/Approximation");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setBounds(150, 150, 400, 150);
