@@ -3,6 +3,7 @@ import java.util.Arrays;
 public class LagrangePolinom {
 	private double[] X; 
 	private double[] Y;
+	private double[] coeffs;
 	private int n;
 	
 	public LagrangePolinom(double[] X, double[] Y) {
@@ -20,7 +21,8 @@ public class LagrangePolinom {
 					subResult *= (x - X[j])/(X[i] - X[j]);
 				}
 			}
-			result += Y[i] * subResult;
+			subResult *= Y[i];
+			result += subResult;
 		}
 		return result;
 	}
