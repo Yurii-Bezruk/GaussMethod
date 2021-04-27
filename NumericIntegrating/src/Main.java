@@ -11,7 +11,7 @@ public class Main {
 				}
 			}
 		});
-		
+		 
 //		Integral I = new Integral(new FirstVariantFunction());
 //		System.out.println(I.solveBySquaresMethod(1.6, 2.4));
 //		System.out.println(I.solveByTrapezeMethod(1.6, 2.4));
