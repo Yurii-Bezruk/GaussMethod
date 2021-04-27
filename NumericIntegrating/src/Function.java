@@ -1,5 +1,4 @@
 
-public interface Function {
-	
+public interface Function {	
 	double f(double x);
 }
